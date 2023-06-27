@@ -1,44 +1,31 @@
-import { connect, Schema, model, Mixed } from 'mongoose';
-import env from 'dotenv';
+import mongoose, { connect, model, set } from "mongoose";
+import catSchema from "./schma/CatSchma.mjs";
+import bookSchema from "./schma/BookSchma.mjs";
+import env from "dotenv";
 env.config();
 
-/**
-String: 文字列
-Number: 数値
-Date: 日付
-Buffer: バイナリデータ
-Boolean: 真偽
-Mixed: なんでもOK
-ObjectId: Mongo固有のID
-Array: 配列
-Decimal128: 浮動小数点
-Map: マップ
-Schema: 他のスキーマ
- */
+set("strictQuery", true);
+
 connect(process.env.MONGO_URI);
 
-const catSchema = new Schema({
-  name: { type: String, required: true },
-  size: { type: Number, required: true, enum: [0,1] },
-  bool: { type: Boolean, default: false, alias: 'b' },
-  dt: {
-    type: Date,
-    set: function (newVal) {
-      return new Date(newVal);
-    },
-    get: function(val) {
-        return val instanceof Date ? val : new Date(val)
-    }
-  },
-  arry: [ String ],
-  anything: Mixed,
+// const Cat = model("Cat", catSchema);
+const Book = model("Book", bookSchema);
+
+// const kitty = new Cat();
+// kitty.name = "Zildjian";
+// kitty.size = 1;
+// kitty.arry = [0, 1];
+// kitty.dt = "2017/12/21";
+const book = new Book({
+  title: "テストブック",
+  description: "これは説明欄です",
+  rating: 4,
+  comment: "素晴らしい",
 });
-const Cat = model('Cat', catSchema);
 
-const kitty = new Cat();
-kitty.name = 'Zildjian';
-kitty.size = 1;
-kitty.arry = [0,1];
-kitty.dt = "2017/12/21";
-
-kitty.save().then((doc) => console.log(doc.b));
+const init = async () => {
+  const registerdBook = await book.save();
+  console.log(registerdBook);
+  mongoose.connection.close();
+};
+init();
