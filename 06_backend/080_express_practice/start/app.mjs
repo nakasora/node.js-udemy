@@ -2,6 +2,7 @@ import express from 'express';
 
 const PORT = 8080;
 const app = express();
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/', function (req, res) {
   res.send(`
@@ -18,4 +19,13 @@ app.get('/', function (req, res) {
     </form>
     `);
 });
+
+app.post('/cart', (req, res) => {
+  const products = req.body.product;
+  res.send(`
+    <h3>${products.join(', ')}がカートに追加されました</h3>
+  `)
+})
+
+app.listen(PORT);
 

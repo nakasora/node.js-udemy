@@ -1,4 +1,4 @@
-import express from 'express';
+import express from "express";
 
 /*
 # useとexpress
@@ -16,17 +16,36 @@ import express from 'express';
 const PORT = 8080;
 const app = express();
 
-app.use(express.json());
+app.use("/", express.json());
 
 // ミドルウェア：ルートハンドラの前後に行われる処理
-app.use('/', function(req, res, next) {
-
+app.use("/", function (req, res, next) {
+  console.log("start");
+  res.send({ msg: "rollup" });
+  next("error");
+  console.log("start xxx");
 });
-
+app.use("/", function (req, res, next) {
+  console.log("middle");
+  next();
+});
+// nextでつなぐ際に、sendを複数回呼び出さないように注意
 // ルートハンドラ：パスとメソッドに紐付くメインの処理
-app.get('/', function(req, res) {
-
+app.get("/", function (req, res, next) {
+  console.log("end1");
+  next();
 });
+app.get("/", function (req, res) {
+  console.log("end2");
+});
+
+app.use((error, req, res, next) => {
+  if (res.headersSent) {
+    return next(error);
+  }
+  res.json({ error: error });
+});
+
 app.listen(PORT, function () {
   console.log(`Server start: http://localhost:${PORT}`);
 });
