@@ -3,6 +3,7 @@ import express from 'express';
 const PORT = 8080;
 const app = express();
 app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }))
 
 app.get('/', function (req, res) {
   res.send(`

@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose';
 
 const bookSchema = Schema(
   {
@@ -6,28 +6,28 @@ const bookSchema = Schema(
       type: String,
       required: true,
     },
+    rating: {
+      type: Number,
+      enum: [1, 2, 3, 4, 5],
+      required: true,
+      get: function (val) {
+        return Math.round(val);
+      },
+      set: function (val) {
+        return Math.round(val);
+      },
+    },
     description: {
       type: String,
       required: true,
-    },
-    rating: {
-      type: Number,
-      required: true,
-      enum: [1, 2, 3, 4, 5],
-      get: (val) => {
-        return Math.round(val);
-      },
-      set: (val) => {
-        return Math.round(val);
-      },
     },
     comment: {
       type: String,
       required: true,
     },
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
-const Book = new model("Book", bookSchema);
+const Book = model('Book', bookSchema);
 export default Book;
