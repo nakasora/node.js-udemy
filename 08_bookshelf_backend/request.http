@@ -1,20 +1,23 @@
 http://localhost:8080/api/books
 
 ###
+http://localhost:8080/not
 
-http://localhost:8080/api/books/6148cb2360bfbbb3b24b6ffc
 ###
 
-DELETE http://localhost:8080/api/books/633471d481d8ae4ba04fbca9
+http://localhost:8080/api/books/6334634881d8ae4ba04fbc8e
+###
+
+DELETE http://localhost:8080/api/books/649bf40e6b0f99a22b142921
 ###
 
 POST http://localhost:8080/api/books
 Content-Type: application/json
 
 {
-    "title": "1",
-    "description": "2",
-    "comment": "3",
+    "title": "テストデータ",
+    "description": "説明欄の内容",
+    "comment": "最高傑作",
     "rating": 4
 }
 
@@ -24,5 +27,5 @@ PATCH http://localhost:8080/api/books/615a27f918837e7774193f85
 Content-Type: application/json
 
 {
-    "rating": 4
+    "title": "updateText"
 }

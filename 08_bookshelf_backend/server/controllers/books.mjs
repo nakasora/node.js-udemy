@@ -1,63 +1,50 @@
-import { validationResult } from 'express-validator';
-import Book from '../models/book.mjs';
+import { validationResult } from "express-validator";
+import Book from "../models/book.mjs";
 
-async function getAllBooks(req, res) {
+const getAllBooks = async (req, res) => {
   const books = await Book.find().sort({ updatedAt: -1 });
   res.json(books);
-}
+};
 
-async function getBookById(req, res) {
-  const _id = req.params.id;
-  const book = await Book.findById(_id);
-
-  if (book === null) return res.status(404).json({ msg: 'Page Not Found' });
-
+const getBookById = async (req, res) => {
+  const fetchTargetId = req.params.id;
+  const book = await Book.findById(fetchTargetId);
+  if (book === null) return res.status(404).json({msg: 'Page Not Found'})
   res.json(book);
-}
+};
 
-async function registBook(req, res) {
+const deleteBook = async (req, res) => {
+  const deleteTargetId = req.params.id;
+  console.log(deleteTargetId)
+  const { deletedCount } = await Book.deleteOne({ _id: deleteTargetId });
+  return deletedCount === 0 ? res.status(404).json({ msg: 'TargetBook Not Found'}) : res.json({ msg: "delete succeed" });
+};
+
+const registBook = async (req, res) => {
   const errors = validationResult(req);
-
   if (!errors.isEmpty()) {
     const errs = errors.array();
     return res.status(400).json(errs);
   }
-
-  const book = new Book(req.body);
-  const newBook = await book.save();
-
+  const postedBook = new Book(req.body);
+  const newBook = await postedBook.save();
   res.status(201).json(newBook);
-}
+};
 
-async function updateBook(req, res) {
+const updateBook = async (req, res) => {
   const errors = validationResult(req);
-
   if (!errors.isEmpty()) {
     const errs = errors.array();
     return res.status(400).json(errs);
   }
-
   const { title, description, comment, rating } = req.body;
-  const _id = req.params.id;
-  const book = await Book.findById(_id);
-
-  if (book === null) return res.status(404).json({ msg: 'Page Not Found' });
-
-  if (title !== undefined) book.title = title;
-  if (description !== undefined) book.description = description;
-  if (comment !== undefined) book.comment = comment;
-  if (rating !== undefined) book.rating = rating;
-  await book.save();
-  res.json(book);
-}
-
-async function deleteBook(req, res) {
-  const _id = req.params.id;
-  const { deletedCount } = await Book.deleteOne({ _id });
-
-  if (deletedCount === 0) return res.status(404).json({ msg: 'Target Book Not Found' });
-
-  res.json({ msg: 'Delete succeeded.' });
-}
-
-export { getAllBooks, getBookById, registBook, updateBook, deleteBook };
+  const patchTargetId = req.params.id;
+  const patchTargetBook = await Book.findById(patchTargetId);
+  if (title !== undefined) patchTargetBook.title = title;
+  if (description !== undefined) patchTargetBook.description = description;
+  if (comment !== undefined) patchTargetBook.comment = comment;
+  if (rating !== undefined) patchTargetBook.rating = rating;
+  await patchTargetBook.save();
+  res.json(patchTargetBook);
+};
+export { registBook, updateBook, getAllBooks, getBookById, deleteBook };
